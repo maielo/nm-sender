@@ -3,13 +3,13 @@
 Wrapper around [nodemailer](https://www.npmjs.com/package/nodemailer) for sending emails via smtp with retries and on-error email notification
 
 - pool is automatically set to `true` (`maxConnections`: 5)
-- `mailOptions` [DOCS](https://nodemailer.com/message/)
+- `mailOptions` - [docs](https://nodemailer.com/message/)
 
 ```js
 // ES6 modules
 import NmSender from 'nm-sender';
 // commonJS
-const NmSender = require('nm-sender');
+const NmSender = require('nm-sender').default;
 
 /**
  * ALL OPTIONS
