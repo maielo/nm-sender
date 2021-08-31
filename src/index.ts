@@ -64,35 +64,53 @@ export default class NmSender {
     _retryCount?: number
   ): Promise<SentMessageInfo> {
     mailOptions.from = mailOptions.from || this.defaultFromAddress;
+
     const that = this;
+
     return new Promise((resolve, reject) => {
+      if (!mailOptions.to) {
+        return reject(`nm-sender - no recipient of email ("to")`);
+      }
+
+      if (Array.isArray(mailOptions.to) && !mailOptions.to.length) {
+        return reject(`nm-sender - no recipient of email ("to")`);
+      }
+
       that.transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
           _retryCount = _retryCount || 1;
 
           if (_retryCount <= that.maxRetries) {
-            setTimeout(() => {
-              that.sendMail(
-                mailOptions,
-                { errorAddress },
-                _retryCount ? _retryCount + 1 : 1
-              );
-            }, that.retryTime * 1000);
+            return new Promise((res, rej) => {
+              setTimeout(async () => {
+                try {
+                  const info = await that.sendMail(
+                    mailOptions,
+                    { errorAddress },
+                    _retryCount ? _retryCount + 1 : 1
+                  );
+
+                  res(info);
+                } catch (err) {
+                  rej(err);
+                }
+              }, that.retryTime * 1000);
+            });
           } else {
             if (errorAddress || that.errorAddress) {
               const _mailOptions = { ...mailOptions };
               _mailOptions.to = errorAddress || that.errorAddress || '';
 
-              let _to = mailOptions.to;
-              if (Array.isArray(_to)) {
-                _to = _to.join(',');
-              }
+              _mailOptions.subject = `FAILED TO SEND TO: ${
+                _mailOptions.to
+              } | subject: ${mailOptions.subject || 'no subject'}`;
 
-              _mailOptions.subject = `FAILED TO SEND TO: ${_to} | subject: ${
-                mailOptions.subject || 'no subject'
-              }`;
               // only one chance
-              that.sendMail(mailOptions, { errorAddress }, that.maxRetries);
+              return that.sendMail(
+                _mailOptions,
+                { errorAddress },
+                that.maxRetries + 1
+              );
             }
 
             return reject(error);
