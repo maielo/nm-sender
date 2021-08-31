@@ -5,6 +5,12 @@ Wrapper around [nodemailer](https://www.npmjs.com/package/nodemailer) for sendin
 - pool is automatically set to `true` (`maxConnections`: 5)
 - `mailOptions` - [docs](https://nodemailer.com/message/)
 
+### install
+
+```
+npm i nm-sender
+```
+
 ```js
 // ES6 modules
 import NmSender from 'nm-sender';
@@ -33,7 +39,7 @@ const e = new NmSender({
 });
 
 // ...
-// DOCS:
+// DOCS: https://nodemailer.com/message/
 try {
   await e.sendMail({
     to: 'yyy@yyy.com',
