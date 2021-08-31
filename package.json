@@ -5,9 +5,9 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "npx tsdx watch --onSuccess \"node ./dist/index.js\"",
-    "customtest": "npx nodemon test/test.js",
     "build": "npx tsdx build --target node",
     "lint": "npx tsdx lint",
+    "test": "npx tsdx test --watch",
     "prepare": "npx tsdx build --target node",
     "np:publish": "git push origin master && np --no-tests --no-2fa",
     "size": "size-limit",
@@ -16,6 +16,7 @@
   "peerDependencies": {},
   "devDependencies": {
     "@size-limit/preset-small-lib": "^4.10.2",
+    "@types/jest": "^27.0.1",
     "@types/nodemailer": "^6.4.4",
     "babel-runtime": "^6.26.0",
     "nodemon": "^2.0.7",
